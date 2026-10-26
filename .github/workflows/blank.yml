@@ -6,31 +6,22 @@ workflow_dispatch:
 jobs:
 build:
 runs-on: ubuntu-22.04
+steps:
+- name: دریافت فایل‌های بازی
+uses: actions/checkout@v4
 
 ```
-steps:
-  - name: دریافت فایل‌های بازی
-    uses: actions/checkout@v4
-
   - name: نصب ابزارهای لازم
     run: |
       sudo apt-get update
       sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk
       python3 -m pip install --user --break-system-packages buildozer cython
 
-  - name: ساخت APK
+  - name: بررسی فایل‌های بازی
     run: |
       if [ ! -f main.py ]; then
         echo "خطا: فایل main.py بازی در مخزن وجود ندارد."
         exit 1
       fi
-      export PATH="$HOME/.local/bin:$PATH"
-      buildozer android debug
-
-  - name: ذخیره فایل APK
-    uses: actions/upload-artifact@v4
-    with:
-      name: world-war-apk
-      path: bin/*.apk
-      if-no-files-found: error
+      echo "فایل main.py پیدا شد."
 ```

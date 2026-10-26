@@ -7,21 +7,17 @@ jobs:
 build:
 runs-on: ubuntu-22.04
 steps:
-- name: دریافت فایل‌های بازی
+- name: Checkout repository
 uses: actions/checkout@v4
 
 ```
-  - name: نصب ابزارهای لازم
+  - name: Check game files
     run: |
-      sudo apt-get update
-      sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk
-      python3 -m pip install --user --break-system-packages buildozer cython
-
-  - name: بررسی فایل‌های بازی
-    run: |
+      echo "Checking repository files..."
+      ls -la
       if [ ! -f main.py ]; then
-        echo "خطا: فایل main.py بازی در مخزن وجود ندارد."
+        echo "ERROR: main.py is missing."
         exit 1
       fi
-      echo "فایل main.py پیدا شد."
+      echo "main.py found."
 ```

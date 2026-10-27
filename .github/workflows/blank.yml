@@ -7,17 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Build APK
-        uses: ArtemSBulgakov/buildozer-action@v1
+      - uses: actions/checkout@v4
+      - uses: ArtemSBulgakov/buildozer-action@v1
         with:
           command: buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: World-War-APK
           path: bin/*.apk
-  

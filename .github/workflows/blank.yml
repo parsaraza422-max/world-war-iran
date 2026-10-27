@@ -1,45 +1,31 @@
 name: Build World War APK
-
 on:
 workflow_dispatch:
-
-permissions:
-contents: read
-
 jobs:
 build:
-name: Build Android APK
 runs-on: ubuntu-22.04
-timeout-minutes: 60
-
-```
 steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+- uses: actions/checkout@v4
+- name: Check files
+run: |
+name: Build World War APK
+on:
+workflow_dispatch:
+jobs:
+build:
+runs-on: ubuntu-22.04
+steps:
+- uses: actions/checkout@v4
+- uses: ArtemSBulgakov/buildozer-action@v1
+with:
+command: buildozer android debug
+- uses: actions/upload-artifact@v4
+with:
+name: World-War-APK
+path: bin/*.apk
 
-  - name: Check project files
-    run: |
-      if [ ! -f buildozer.spec ]; then
-        echo "ERROR: buildozer.spec not found in repository root."
-        exit 1
-      fi
-      if [ ! -f main.py ]; then
-        echo "ERROR: main.py not found in repository root."
-        exit 1
-      fi
-
-  - name: Build APK
-    uses: ArtemSBulgakov/buildozer-action@v1
-    with:
-      command: buildozer android debug
-
-  - name: Upload APK
-    if: success()
-    uses: actions/upload-artifact@v4
-    with:
-      name: World-War-APK
-      path: bin/*.apk
-      if-no-files-found: error
-      retention-days: 7
-```
+uses: actions/upload-artifact@v4
+with:
+name: World-War-APK
+path: bin/*.apk
 

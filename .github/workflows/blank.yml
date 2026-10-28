@@ -77,6 +77,14 @@ jobs:
 
       - name: Build APK
         run: |
+          mkdir -p "$HOME/.buildozer/android/platform"
+
+          ln -sfn "$ANDROID_HOME" \
+            "$HOME/.buildozer/android/platform/android-sdk"
+
+          echo "Checking AIDL:"
+          ls -l "$HOME/.buildozer/android/platform/android-sdk/build-tools/35.0.0/aidl"
+
           buildozer android debug
 
       - name: Upload APK

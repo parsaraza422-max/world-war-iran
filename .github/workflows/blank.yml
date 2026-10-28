@@ -79,11 +79,30 @@ jobs:
         run: |
           mkdir -p "$HOME/.buildozer/android/platform"
 
-          ln -sfn "$ANDROID_HOME" \
-            "$HOME/.buildozer/android/platform/android-sdk"
+          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
+
+          if [ ! -e "$SDK_DIR" ]; then
+            ln -s "$ANDROID_HOME" "$SDK_DIR"
+          fi
+
+          mkdir -p "$ANDROID_HOME/tools/bin"
+
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+
+          if [ ! -f "$SDKMANAGER" ]; then
+            SDKMANAGER="$ANDROID_HOME/cmdline-tools/9.0/bin/sdkmanager"
+          fi
+
+          test -f "$SDKMANAGER"
+
+          ln -sfn "$SDKMANAGER" \
+            "$ANDROID_HOME/tools/bin/sdkmanager"
+
+          echo "Checking sdkmanager:"
+          "$ANDROID_HOME/tools/bin/sdkmanager" --version
 
           echo "Checking AIDL:"
-          ls -l "$HOME/.buildozer/android/platform/android-sdk/build-tools/35.0.0/aidl"
+          ls -l "$ANDROID_HOME/build-tools/35.0.0/aidl"
 
           buildozer android debug
 

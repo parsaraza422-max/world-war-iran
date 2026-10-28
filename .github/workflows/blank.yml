@@ -42,11 +42,25 @@ jobs:
       - name: Install Android build tools
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --sdk_root="$ANDROID_HOME" \
+
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+
+          if [ ! -f "$SDKMANAGER" ]; then
+            SDKMANAGER="$ANDROID_HOME/cmdline-tools/9.0/bin/sdkmanager"
+          fi
+
+          if [ ! -f "$SDKMANAGER" ]; then
+            echo "ERROR: sdkmanager not found"
+            exit 1
+          fi
+
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" \
             "platform-tools" \
             "platforms;android-35" \
             "build-tools;35.0.0"
+
           test -f "$ANDROID_HOME/build-tools/35.0.0/aidl"
+
           echo "AIDL installed successfully"
 
       - name: Install Buildozer

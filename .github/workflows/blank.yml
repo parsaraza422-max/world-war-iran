@@ -41,18 +41,15 @@ jobs:
 
       - name: Install Android build tools
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
 
           if [ ! -f "$SDKMANAGER" ]; then
             SDKMANAGER="$ANDROID_HOME/cmdline-tools/9.0/bin/sdkmanager"
           fi
 
-          if [ ! -f "$SDKMANAGER" ]; then
-            echo "ERROR: sdkmanager not found"
-            exit 1
-          fi
+          test -f "$SDKMANAGER"
+
+          yes | "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --licenses || true
 
           "$SDKMANAGER" --sdk_root="$ANDROID_HOME" \
             "platform-tools" \
@@ -68,11 +65,19 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer cython==0.29.36
 
+      - name: Configure Buildozer SDK
+        run: |
+          sed -i '/^android.sdk_path =/d' buildozer.spec
+          sed -i '/^android.skip_update =/d' buildozer.spec
+          sed -i '/^android.accept_sdk_license =/d' buildozer.spec
+
+          printf '\nandroid.sdk_path = %s\n' "$ANDROID_HOME" >> buildozer.spec
+          printf 'android.skip_update = True\n' >> buildozer.spec
+          printf 'android.accept_sdk_license = True\n' >> buildozer.spec
+
       - name: Build APK
         run: |
           buildozer android debug
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME }}
 
       - name: Upload APK
         if: always()
